@@ -2,7 +2,7 @@ import express from 'express';
 import WebSocket from 'ws';
 import http from 'http';
 import tf from '@tensorflow/tfjs-node';
-import poseDetection from '@tensorflow-models/pose-detection';
+import * as poseDetection from '@tensorflow-models/pose-detection';
 
 const app = express();
 const server = http.createServer(app);
@@ -14,7 +14,7 @@ let detector: poseDetection.PoseDetector;
 async function initPoseDetector() {
   const model = poseDetection.SupportedModels.MoveNet;
   detector = await poseDetection.createDetector(model, {
-    modelType: 'SinglePoseLightning',
+    modelType: 'SinglePose.Lightning',
   });
 }
 initPoseDetector();
