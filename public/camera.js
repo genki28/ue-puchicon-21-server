@@ -22,20 +22,25 @@ ws.onerror = function (error) {
   console.log('error', error)
 }
 
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
   video.srcObject = stream;
+  video.play()
 })
 
 function sendFrames() {
   video.addEventListener('play', () => {
-    const canvas = document.createElement('canvas')
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
+    const canvas = document.createElement('canvas'); // canvas要素を作成
 
-      (function sendFrame() {
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
-        ws.send(canvas.toDataURL('image/jpeg', 0.7))
-        requestAnimationFrame(sendFrame)
-    })()
+    (function sendFrame() {
+      canvas
+        .getContext('2d')
+        .drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => ws.send(blob), 'image/jpeg', 0.7);
+      requestAnimationFrame(sendFrame);
+    })();
   })
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  sendFrames()
+})
