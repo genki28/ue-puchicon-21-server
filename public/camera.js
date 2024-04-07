@@ -5,17 +5,29 @@ ws.onopen = function () {
   console.log('connected')
 }
 
+let rightHandCount = 0;
+let leftHandCount = 0;
+
 ws.onmessage = function (event) {
-  const results = document.getElementById('results')
-  const poses = JSON.parse(event.data)
+  const results = document.getElementById('results');
 
-  results.innerHTML = ''
+  // {rightHandExtended: boolean, leftHandExtended: boolean}
+  const result = JSON.parse(event.data);
 
-  poses.forEach((pose, index) => {
-    const poseElement = document.createElement('div')
-    poseElement.textContent = `Pose ${index + 1}: ${JSON.stringify(pose)}`;
-    results.appendChild(poseElement);
-  })
+  if (result.isLeftHandUp) rightHandCount++;
+  if (result.isRightHandUp) leftHandCount++;
+
+
+  results.innerHTML = '';
+
+  // 右手の結果を表示
+  const rightHandResult = document.createElement('p');
+  rightHandResult.textContent = `右手が前に出た回数: ${rightHandCount}`;
+  results.appendChild(rightHandResult);
+
+  const leftHandResult = document.createElement('p');
+  leftHandResult.textContent = `左手が前に出た回数: ${leftHandCount}`;
+  results.appendChild(leftHandResult);
 }
 
 ws.onerror = function (error) {
